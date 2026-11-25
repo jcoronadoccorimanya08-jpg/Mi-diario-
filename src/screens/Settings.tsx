@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { SyncCard } from '../components/SyncCard';
+import { linkSync, sync, unlinkSync } from '../lib/syncSetup';
 import { Icon } from '../components/Icon';
 import { PatternPad } from '../components/PatternPad';
 import { SectionTitle } from '../components/ui';
@@ -145,23 +147,8 @@ export function Settings({ state, today, hasBio }: { state: AppState; today: ISO
         </div>
       </section>
 
-      <SectionTitle>📲 Celular ↔ tablet</SectionTitle>
-      <section className="card stack">
-        <p className="fine">En el dispositivo donde escribiste, toca «Pasar» y elige tu otro dispositivo en Quick Share. En el otro, toca «Recibir y juntar», elige el archivo (queda en Descargas) y dibuja tu patrón. Se junta día por día: no se borra nada de ninguno de los dos.</p>
-        <button type="button" className="btn primary" onClick={() => void backup('share')}>
-          📲 Pasar a mi otro dispositivo
-        </button>
-        <button
-          type="button"
-          className="btn"
-          onClick={() => {
-            mergeMode.current = true;
-            fileRef.current?.click();
-          }}
-        >
-          📥 Recibir y juntar
-        </button>
-      </section>
+      <SectionTitle>☁️ Celular ↔ tablet</SectionTitle>
+      <SyncCard code={state.settings.syncCode} onSet={linkSync} onOff={unlinkSync} onNow={() => void sync.syncNow()} />
 
       <SectionTitle>Respaldo</SectionTitle>
       <section className="card stack">

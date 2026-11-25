@@ -74,6 +74,7 @@ function sanitizeSettings(v: unknown): Settings | null {
     theme: isTheme(v.theme) ? v.theme : 'system',
     ...(isAccent(v.accent) ? { accent: v.accent } : {}),
     ...(isTextSize(v.textSize) ? { textSize: v.textSize } : {}),
+    ...(typeof v.syncCode === 'string' && /^[a-z0-9-]{16,120}$/.test(v.syncCode) ? { syncCode: v.syncCode } : {}),
     autoLockMinutes: [0, 1, 5, 15].includes(v.autoLockMinutes as number) ? (v.autoLockMinutes as number) : 1,
     ...(typeof v.lastBackupAt === 'string' ? { lastBackupAt: v.lastBackupAt } : {}),
     createdAt: typeof v.createdAt === 'string' ? v.createdAt : new Date().toISOString(),

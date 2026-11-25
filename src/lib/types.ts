@@ -60,6 +60,8 @@ export interface Settings {
   theme: Theme;
   accent?: Accent;
   textSize?: TextSize;
+  /** Código de sincronización celular ↔ tablet (solo dentro de tus datos cifrados). */
+  syncCode?: string;
   autoLockMinutes: number;
   lastBackupAt?: string;
   createdAt: string;

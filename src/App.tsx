@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { sync } from './lib/syncSetup';
 import { ConfettiHost } from './components/Confetti';
 import { PrintView } from './components/PrintView';
 import { BottomNav, ToastHost, type Tab } from './components/ui';
@@ -82,6 +83,11 @@ export function App() {
       setTab('hoy');
       setDay(null);
     }
+  }, [phase]);
+
+  // Al desbloquear: trae lo último de tu otro dispositivo (y sube lo pendiente).
+  useEffect(() => {
+    if (phase === 'unlocked') void sync.syncNow();
   }, [phase]);
 
   useEffect(() => {
