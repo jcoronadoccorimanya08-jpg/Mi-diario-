@@ -145,18 +145,21 @@ export function Settings({ state, today, hasBio }: { state: AppState; today: ISO
         </div>
       </section>
 
-      <SectionTitle>Pasar mi diario (tablet ↔ celular)</SectionTitle>
+      <SectionTitle>📲 Celular ↔ tablet</SectionTitle>
       <section className="card stack">
-        <p className="fine">1. En el dispositivo donde escribiste, toca «Compartir o guardar» (abajo) y mándate el archivo. 2. En el otro, toca «Juntar con este diario» y dibuja el patrón de ese dispositivo. Se junta día por día, sin borrar nada.</p>
+        <p className="fine">En el dispositivo donde escribiste, toca «Pasar» y elige tu otro dispositivo en Quick Share. En el otro, toca «Recibir y juntar», elige el archivo (queda en Descargas) y dibuja tu patrón. Se junta día por día: no se borra nada de ninguno de los dos.</p>
+        <button type="button" className="btn primary" onClick={() => void backup('share')}>
+          📲 Pasar a mi otro dispositivo
+        </button>
         <button
           type="button"
-          className="btn primary"
+          className="btn"
           onClick={() => {
             mergeMode.current = true;
             fileRef.current?.click();
           }}
         >
-          <Icon name="upload" size={18} /> Juntar con este diario
+          📥 Recibir y juntar
         </button>
       </section>
 
