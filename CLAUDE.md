@@ -8,7 +8,7 @@ PWA personal de diario: cada día, ánimo, lo que pasó (a mano con S Pen en hoj
 - Las apps comparten el mismo sitio (mismo origen): las llaves empiezan con `midiario.` y la base IndexedDB es `midiario-v1`. Nunca leas ni borres llaves de otra app.
 - Datos **solo cifrados** (`src/lib/vault.ts`), con patrón (PBKDF2) y opcionalmente huella (passkey con PRF). Sin cifrar solo tema y apariencia (`midiario.theme`, `midiario.look`) y el aviso de instalación.
 - Sin servidores, analítica ni librerías que llamen a internet. La voz es la del teclado del sistema; lo escrito a mano no se busca por palabras (necesitaría internet).
-- **Widget (app «Rachas»)** (`src/lib/widget.ts`): solo racha, montaña, caritas de 7 días, pregunta del día y la fecha/carita de «hace un año». **Nunca el texto ni las hojas.**
+- **Widget (app «Rachas»)** (`src/lib/widget.ts`): solo racha, montaña y la pregunta del día (el widget ya no muestra caritas; «hace un año» solo dice que escribiste). **Nunca el texto ni las hojas.**
 
 ## Reglas del producto
 
@@ -24,4 +24,4 @@ PWA personal de diario: cada día, ánimo, lo que pasó (a mano con S Pen en hoj
 - Fechas siempre en `America/La_Paz` (`src/lib/dates.ts`).
 - Reglas en `src/lib/engine.ts`, funciones puras con pruebas en `tests/`.
 - Estado `schema: 1` validado en `src/lib/sanitize.ts`. Si cambias el formato, sube `schema` y migra. Nunca pierdas un día.
-- Antes de entregar: `npm run check`. El push a `main` publica en GitHub Pages (`/Mi-diario-/`).
+- Antes de entregar: `npm run check`. Se publica copiando el build (`BASE_PATH=/diario/ npx vite build`) a la carpeta `diario/` del repositorio del sitio raíz.
