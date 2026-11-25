@@ -14,11 +14,29 @@ export const sync = createSync<AppState>({
   onCommit,
 });
 
+/** Primer dispositivo: crea la caja con lo de aquí. */
 export function linkSync(code: string) {
   sync.reset();
   setSyncCode(code);
   void sync.syncNow();
 }
+
+/** Otro dispositivo: solo se vincula si con ese código ya hay algo (si no, lo escribiste mal). */
+export async function joinSync(code: string): Promise<boolean> {
+  if (!(await sync.exists(code))) return false;
+  linkSync(code);
+  return true;
+}
+
+export const syncCardProps = {
+  onSet: linkSync,
+  onJoin: joinSync,
+  onOff: () => unlinkSync(),
+  onNow: () => void sync.syncNow(),
+  onChoose: (pick: 'cloud' | 'mine') => void sync.choose(pick),
+  onUndo: () => void sync.undo(),
+  onDropUndo: () => sync.dropUndo(),
+};
 
 export function unlinkSync() {
   setSyncCode(undefined);
