@@ -49,6 +49,21 @@ export const PAGE_H = 1414;
 
 /** La pregunta del día cambia sola (se elige por la fecha). */
 export const PROMPTS = [
+  '¿Qué pasó hoy?',
+  '¿Qué fue lo más bonito de hoy?',
+  '¿Qué soñaste anoche?',
+  '¿Qué canción te acompañó hoy?',
+  '¿Qué comiste rico hoy?',
+  '¿Con quién hablaste hoy y de qué?',
+  '¿Qué te dio risa hoy?',
+  '¿Qué viste hoy que te llamó la atención?',
+  '¿Qué fue lo más raro del día?',
+  '¿Qué te gustaría que pase mañana?',
+  '¿Cómo te sentiste al despertar?',
+  '¿Qué hiciste hoy por primera vez?',
+  '¿Qué fue lo mejor y lo peor del día?',
+  '¿A quién extrañaste hoy?',
+  '¿Qué pensaste antes de dormir anoche?',
   '¿Qué te hizo sonreír hoy?',
   '¿Qué aprendiste hoy?',
   '¿Qué fue lo más difícil del día y cómo lo enfrentaste?',
