@@ -4,7 +4,7 @@ import { Icon } from '../components/Icon';
 import { InkPad } from '../components/Ink';
 import { ScreenHeader } from '../components/ui';
 import { MOODS, PAPERS, PAPER_COLORS, TEMPLATES } from '../lib/config';
-import { formatLong, type ISODate } from '../lib/dates';
+import { addDays, formatLong, graceDay, type ISODate } from '../lib/dates';
 import { dayStatus, hasContent, normTag, onThisDay, promptFor, streak, suggestTags, tagCounts } from '../lib/engine';
 import { haptic, toast } from '../lib/feedback';
 import { actions } from '../lib/store';
@@ -46,6 +46,10 @@ export function WriteScreen({ state, date, today, now, onOpenDay }: { state: App
   const [paperColor, setPaperColor] = useState<PaperColor>(s.paperColor);
   const isToday = date === today;
   const st = dayStatus(state, date, now);
+  const yesterday = addDays(today, -1);
+  // De 00:00 a 03:59: si se te pasó escribir ayer, todavía cuenta (75 %).
+  const yesterdayOpen = graceDay(now) === yesterday && dayStatus(state, yesterday, now).kind === 'open';
+  const inGrace = !isToday && date === graceDay(now) && st.kind === 'open';
   const written = st.kind === 'written';
   const pages: Page[] = entry.pages?.length ? entry.pages : [{ strokes: [] }];
   const page = pages[Math.min(pageIx, pages.length - 1)]!;
@@ -87,7 +91,7 @@ export function WriteScreen({ state, date, today, now, onOpenDay }: { state: App
     <main className="screen">
       <ScreenHeader
         eyebrow={formatLong(date)}
-        title={isToday ? (s.nick ? `Hola, ${s.nick}` : 'Mi día') : 'Otro día'}
+        title={isToday ? (s.nick ? `Hola, ${s.nick}` : 'Mi día') : inGrace ? 'Lo de ayer' : 'Otro día'}
         right={
           <div className="streak-pill" aria-label={`Racha de ${run} días`}>
             <Icon name="flame" size={18} /> {run}
@@ -98,6 +102,18 @@ export function WriteScreen({ state, date, today, now, onOpenDay }: { state: App
         <button type="button" className="btn ghost" onClick={() => onOpenDay(today)}>
           ← Volver a hoy
         </button>
+      )}
+      {isToday && yesterdayOpen && (
+        <section className="card dy-yesterday" role="alert">
+          <p>
+            <b>🌙 ¿Se te pasó escribir ayer?</b>
+            <br />
+            <span className="muted">Ya es otro día (cambia a las 00:00), pero hasta las 4:00 lo de ayer todavía cuenta: vale 75 % y tu racha sigue.</span>
+          </p>
+          <button type="button" className="btn primary" onClick={() => onOpenDay(yesterday)}>
+            Escribir lo de ayer
+          </button>
+        </section>
       )}
 
       {memories.map((m) => (
@@ -310,10 +326,10 @@ export function WriteScreen({ state, date, today, now, onOpenDay }: { state: App
       <section className="card dy-save">
         {written ? (
           <p>
-            <b>Día guardado · {st.kind === 'written' ? st.pct : 0} %</b> <span className="muted">{st.kind === 'written' && st.late ? '(de madrugada)' : '(a tiempo)'}. Puedes seguir escribiendo cuando quieras.</span>
+            <b>Día guardado · {st.kind === 'written' ? st.pct : 0} %</b> <span className="muted">{st.kind === 'written' && st.late ? '(pasada la medianoche)' : '(a tiempo)'}. Puedes seguir escribiendo cuando quieras.</span>
           </p>
         ) : (
-          <p className="muted">{isToday ? 'Antes de medianoche vale 100 %; de 00:00 a 03:59, 75 %.' : 'Los días pasados quedan en tu diario, pero no suman a la racha.'}</p>
+          <p className="muted">{isToday ? 'Antes de las 00:00 vale 100 %. Si se te pasa, hasta las 4:00 todavía puedes escribir «ayer» (75 %).' : inGrace ? 'Hasta las 4:00 todavía cuenta: si lo guardas ahora, vale 75 % y tu racha sigue.' : 'Los días pasados quedan en tu diario, pero no suman a la racha.'}</p>
         )}
         <div className="btn-row">
           <button type="button" className="btn primary dy-save-btn" onClick={saveDay}>

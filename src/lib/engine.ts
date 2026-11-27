@@ -2,7 +2,7 @@
  * Reglas de Mi Diario: funciones puras (la hora «de ahora» siempre se pasa).
  */
 import { BADGES, LATE_PCT, MOUNTAIN_DAYS, ON_TIME_PCT, PROMPTS } from './config';
-import { addDays, addMonths, appDay, maxDate, rangeDates, todayISO, type ISODate } from './dates';
+import { addDays, addMonths, appDay, graceDay, inTimeFor, maxDate, rangeDates, todayISO, type ISODate } from './dates';
 import type { AppState, Entry, Mood } from './types';
 
 /** ¿El día tiene algo escrito (o dibujado, o al menos tu ánimo)? */
@@ -14,25 +14,26 @@ export function hasContent(e: Entry | undefined): boolean {
 export type DayStatus = { kind: 'before' } | { kind: 'open' } | { kind: 'written'; pct: number; late: boolean } | { kind: 'missed' };
 
 /**
- * Escribir el día antes de medianoche vale 100 %; de 00:00 a 03:59 (todavía es «ayer»), 75 %.
- * Si a las 4:00 no escribiste, ese día vale 0 % y corta la racha.
+ * El día cambia a las 00:00. Escribirlo antes de medianoche vale 100 %; si se te pasó, todavía puedes escribir «ayer»
+ * de 00:00 a 03:59 y vale 75 %. Si a las 4:00 no escribiste, ese día vale 0 % y corta la racha.
  */
 export function dayStatus(state: AppState, day: ISODate, now: Date): DayStatus {
   if (day < state.settings.startDate) return { kind: 'before' };
   const e = state.entries[day];
   // Escrito después de su día (pasadas las 4:00 del siguiente): queda en tu diario, pero no cuenta para la racha.
-  if (e?.savedAt && hasContent(e) && appDay(new Date(e.savedAt)) === day) {
+  if (e?.savedAt && hasContent(e) && inTimeFor(day, new Date(e.savedAt))) {
     const late = todayISO(new Date(e.savedAt)) !== day;
     return { kind: 'written', pct: late ? LATE_PCT : ON_TIME_PCT, late };
   }
-  return appDay(now) > day ? { kind: 'missed' } : { kind: 'open' };
+  return graceDay(now) > day ? { kind: 'missed' } : { kind: 'open' };
 }
 
 /** Días seguidos escribiendo. Hoy, si todavía no escribes, no corta. */
 export function streak(state: AppState, now: Date): number {
   let d = appDay(now);
   let n = 0;
-  if (dayStatus(state, d, now).kind === 'open') d = addDays(d, -1);
+  // Hoy (y «ayer» hasta las 4:00) sin escribir todavía no cortan.
+  for (let i = 0; i < 2 && dayStatus(state, d, now).kind === 'open'; i++) d = addDays(d, -1);
   while (d >= state.settings.startDate && dayStatus(state, d, now).kind === 'written') {
     n++;
     d = addDays(d, -1);

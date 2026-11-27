@@ -14,7 +14,7 @@ PWA personal de diario: cada día, ánimo, lo que pasó (a mano con S Pen en hoj
 ## Reglas del producto
 
 - Español de Bolivia, cálido y **sin culpa**.
-- **El día cambia a las 4:00** (`appDay`). Guardar el día antes de medianoche vale 100 %; de 00:00 a 03:59, 75 %. Un día escrito después de su plazo queda en el diario pero **no cuenta** para la racha. Hoy sin escribir no corta.
+- **El día cambia a las 00:00** (`appDay`, pedido de la persona). Guardar el día antes de medianoche vale 100 %; si se te pasó, «ayer» todavía cuenta de 00:00 a 03:59 (`graceDay`, `inTimeFor`) y vale 75 %. Un día escrito después de su plazo queda en el diario pero **no cuenta** para la racha. Hoy sin escribir no corta.
 - **Hoja a mano** (`src/components/Ink.tsx`): solo el lápiz escribe (la palma no raya, el dedo desplaza) salvo «Escribir con el dedo»; la presión cambia el grosor; la tinta se guarda como trazos enteros en una hoja virtual de 1000 × 1414.
 - **Etiquetas**: cada una nueva queda guardada como botón (`settings.tags`); se sugieren si aparecen en lo escrito.
 - **Pasar mi diario**: el respaldo de otro dispositivo se junta día por día sin borrar nada (`mergeEntries`).

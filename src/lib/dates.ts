@@ -130,10 +130,12 @@ export function formatRange(from: ISODate, to: ISODate): string {
   return `${formatShort(from)} – ${formatShort(to)}`;
 }
 
-// ---------- El día cambia a las 4:00 ----------
+// ---------- El día cambia a las 00:00 (con margen hasta las 4:00 para «ayer») ----------
 
-/** Hora en que empieza el día de la app: si anotas pasada la medianoche, todavía cuenta para el día anterior. */
-export const DAY_START_HOUR = 4;
+/** El día de la app cambia a las 00:00 (pedido de la persona). */
+export const DAY_START_HOUR = 0;
+/** Hasta las 4:00 del día siguiente todavía puedes cerrar (o escribir) «ayer», y vale 75 %. */
+export const GRACE_HOURS = 4;
 
 const timeFormatter = new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 
@@ -142,9 +144,20 @@ export function clockOf(t: Date = new Date()): string {
   return timeFormatter.format(t);
 }
 
-/** El día de la app: la fecha de La Paz corrida 4 horas (de 00:00 a 03:59 todavía es «ayer»). */
+/** El día de la app: la fecha de La Paz (cambia a las 00:00). */
 export function appDay(now: Date = new Date()): ISODate {
   return todayISO(new Date(now.getTime() - DAY_START_HOUR * 3_600_000));
+}
+
+/** El último día que todavía se puede cerrar o escribir: de 00:00 a 03:59 es «ayer»; después, hoy. */
+export function graceDay(now: Date = new Date()): ISODate {
+  return todayISO(new Date(now.getTime() - GRACE_HOURS * 3_600_000));
+}
+
+/** ¿Lo que guardaste en `at` todavía era a tiempo para `day`? (ese día, o antes de las 4:00 del siguiente). */
+export function inTimeFor(day: ISODate, at: Date): boolean {
+  const d = todayISO(at);
+  return d === day || (d > day && graceDay(at) === day);
 }
 
 /** Suma meses a una fecha; si el día no existe en ese mes, usa el último. */

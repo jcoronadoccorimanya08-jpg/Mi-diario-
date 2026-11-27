@@ -3880,3 +3880,9 @@ dialog.bf-sheet {
   border-top: 1px solid var(--line);
   padding-top: 10px;
 }
+
+.dy-yesterday {
+  display: grid;
+  gap: 10px;
+  border-color: var(--info-line);
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { appDay, type ISODate } from './dates';
 
-/** "Hoy" de la app (cambia a las 4:00 en La Paz). Se actualiza solo o al volver a abrir la app. */
+/** "Hoy" de la app (cambia a las 00:00 en La Paz). Se actualiza solo o al volver a abrir la app. */
 export function useToday(): ISODate {
   const [today, setToday] = useState(() => appDay());
   useEffect(() => {

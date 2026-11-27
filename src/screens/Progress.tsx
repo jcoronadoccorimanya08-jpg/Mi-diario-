@@ -50,7 +50,7 @@ export function ProgressScreen({ state, today, now, hasBio, onPrint }: { state: 
       <section className="card">
         <h2 className="card-title">Tu montaña</h2>
         {m.length ? <Mountain data={m.map((x, i) => ({ date: x.date, pct: x.pct, avg7: avg(i), won: x.written }))} goal={100} /> : <p className="muted">Escribe tu primer día y aparece tu montaña.</p>}
-        <p className="fine">100 %: escribiste antes de medianoche. 75 %: de madrugada.</p>
+        <p className="fine">100 %: escribiste antes de medianoche. 75 %: lo escribiste pasada la medianoche (hasta las 4:00).</p>
       </section>
 
       <SectionTitle aside={sunday ? '¡Hoy toca repaso!' : undefined}>Tu semana</SectionTitle>

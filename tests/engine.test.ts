@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { badges, dayStatus, mergeEntries, monthSummary, normTag, onThisDay, promptFor, search, streak, suggestTags, tagCounts } from '../src/lib/engine';
+import { appDay } from '../src/lib/dates';
 import { initialState } from '../src/lib/store';
 import { sanitizeState } from '../src/lib/sanitize';
 import type { AppState, Entry } from '../src/lib/types';
@@ -23,6 +24,17 @@ describe('racha del diario', () => {
     expect(dayStatus(s, '2026-11-21', now)).toMatchObject({ kind: 'written', pct: 75, late: true });
     expect(streak(s, now)).toBe(2);
     expect(streak(s, lp('2026-11-23', '05:00'))).toBe(0);
+  });
+  it('el día cambia a las 00:00; «ayer» sin escribir no corta hasta las 4:00 y un día escrito temprano cuenta', () => {
+    const s = base();
+    s.entries['2026-11-20'] = day('2026-11-20', lp('2026-11-20', '22:30').toISOString());
+    expect(appDay(lp('2026-11-22', '00:10'))).toBe('2026-11-22');
+    expect(dayStatus(s, '2026-11-21', lp('2026-11-22', '01:00')).kind).toBe('open');
+    expect(streak(s, lp('2026-11-22', '01:00'))).toBe(1);
+    expect(dayStatus(s, '2026-11-21', lp('2026-11-22', '04:00')).kind).toBe('missed');
+    // Escribir el mismo día a las 02:00 de ese día también cuenta (100 %).
+    s.entries['2026-11-22'] = day('2026-11-22', lp('2026-11-22', '02:00').toISOString());
+    expect(dayStatus(s, '2026-11-22', lp('2026-11-22', '10:00'))).toMatchObject({ kind: 'written', pct: 100 });
   });
   it('un día vacío no cuenta aunque lo hayas abierto', () => {
     const s = base();
